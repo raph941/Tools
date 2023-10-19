@@ -6,12 +6,15 @@ export interface StackData {
   displayValue: string;
 }
 
+export type CSVParsedDataType = { [key: string]: StackData[] };
+
+
 const processCSVData = (
   parsedData: any[],
-  stackToSeeIndex: Number,
-  emailColumnName: string
-): StackData[] => {
-  const languageData: StackData[] = [];
+  emailColumnName: string,
+  excludedColumns: string[]
+): CSVParsedDataType => {
+  const data: CSVParsedDataType = {};
 
   // Find the index of the email column
   const emailColumnIndex = parsedData[0].indexOf(emailColumnName);
@@ -20,17 +23,40 @@ const processCSVData = (
     throw Error("Email column not found.");
   }
 
-  // Iterate through the parsed data to collect language data for the specified stack
+  // Find the indices of the excluded columns
+  const excludedColumnIndices = excludedColumns.map((column) =>
+    parsedData[0].indexOf(column)
+  );
+
+  // Iterate through the parsed data to collect language data
   for (let i = 1; i < parsedData.length; i++) {
     const rowData = parsedData[i];
     const email = rowData[emailColumnIndex] || "";
-    const displayValue = rowData[String(stackToSeeIndex)] || "";
 
-    languageData.push({ email, displayValue });
+    for (let j = 0; j < rowData.length; j++) {
+      if (!excludedColumnIndices.includes(j)) {
+        const columnName = parsedData[0][j];
+        if (!data[columnName]) {
+          data[columnName] = [];
+        }
+
+        // Check if this row already exists for this technology
+        const exists = data[columnName].some((entry) => entry.email === email);
+
+        if (!exists) {
+          const stackData: StackData = {
+            email,
+            displayValue: rowData[j] || "",
+          };
+          data[columnName].push(stackData);
+        }
+      }
+    }
   }
 
-  return languageData;
+  return data;
 };
+
 
 export const useHandleCsv = () => {
   const [parsedCsvData, setParsedCsvData] = useState<any[]>([]);
@@ -56,15 +82,17 @@ export const useHandleCsv = () => {
   };
 
   const parseCsv = (
-    stackToSeeIndex: Number,
-    emailColumnName: string
-  ): StackData[] => {
-    const data: StackData[] = processCSVData(
+    emailColumnName: string,
+    nonStackColumnNames: string
+  ): CSVParsedDataType => {
+    const data = processCSVData(
       parsedCsvData,
-      stackToSeeIndex,
-      emailColumnName
+      emailColumnName,
+      nonStackColumnNames?.split(',')
     );
-    return data;
+    // console.log(data)
+
+    return data
   };
 
   return {

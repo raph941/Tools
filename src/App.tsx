@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import logo from "./images/gitstart-brand.svg";
 import { useHandleCsv } from "./hooks";
-import { StackData } from "./hooks/useHandleCsv";
+import { CSVParsedDataType } from "./hooks/useHandleCsv";
 import { BarChart } from "./BarChart";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [stackToSeeIndex, setStackToSeeIndex] = useState<number>(6);
+  const [nonStackColumnNames, setNonStackColumnNames] = useState<string>("Submission ID,Respondent ID,Submitted at,Role,Languages/Stack you are familiar with  (not necessarily an expert at) ,Email (Gitstart mail)");
   const [emailColumnName, setEmailColumnName] = useState<string>();
-  const [languageData, setLanguageData] = useState<StackData[]>([]);
-  const [columnNames, setColumnNames] = useState<string[]>();
+  const [languageData, setLanguageData] = useState<CSVParsedDataType>();
+  // const [columnNames, setColumnNames] = useState<string[]>();
   const [error, setError] = useState<string>("");
   const { parseCsv, getColumnNames } = useHandleCsv();
 
@@ -18,7 +18,7 @@ function App() {
     if (files && files.length > 0) {
       setSelectedFile(files[0]);
       const names = await getColumnNames(files[0]);
-      setColumnNames(names);
+      // setColumnNames(names);
       setEmailColumnName(() =>
         names?.find((name) => name.toLowerCase().includes("email"))
       );
@@ -30,10 +30,11 @@ function App() {
     setError("");
     if (selectedFile) {
       try {
-        const stackData = await parseCsv(stackToSeeIndex, emailColumnName || "");
+        const stackData = await parseCsv(emailColumnName || "", nonStackColumnNames);
         setLanguageData(stackData);
       } catch (error: any) {
-        setError(error.message);
+        throw Error(error);
+        // setError(error.message);
       }
     }
   };
@@ -84,6 +85,22 @@ function App() {
           {!!selectedFile && (
             <div className="w-full">
               <label className="flex flex-col my-4 text-gray-700 mb-2">
+                Non stack column names to exclude from the chart.
+              </label>
+              <input
+                id="stack-input"
+                type="text"
+                required={true}
+                className="border border-gray-400 p-2 w-full max-w-md rounded-md cursor-pointer "
+                value={nonStackColumnNames}
+                onChange={(e) => setNonStackColumnNames(e.target.value)}
+              />
+            </div>
+          )}
+
+          {/* {!!selectedFile && (
+            <div className="w-full">
+              <label className="flex flex-col my-4 text-gray-700 mb-2">
                 Stack to display column name (on csv file).
               </label>
               <select
@@ -98,7 +115,7 @@ function App() {
                 ))}
               </select>
             </div>
-          )}
+          )} */}
 
           <button className="mt-4 px-20 py-3 bg-black text-white font-semibold rounded-full hover:bg-white hover:text-black hover:border hover:border-black">
             Process
@@ -106,15 +123,11 @@ function App() {
           {error && <div className="text-red-500">{error}</div>}
         </form>
 
-        {!!languageData?.length && (
+        {!!languageData && (
           <>
             <hr className="broder" />
 
             <div className="mt-8">
-              <h2 className="font-semibold text-xl md:text-2xl">
-                {columnNames?.[stackToSeeIndex]}
-              </h2>
-
               <BarChart chartData={languageData} />
             </div>
           </>
