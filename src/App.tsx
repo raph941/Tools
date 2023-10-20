@@ -9,7 +9,6 @@ function App() {
   const [nonStackColumnNames, setNonStackColumnNames] = useState<string>("Submission ID,Respondent ID,Submitted at,Role,Languages/Stack you are familiar with  (not necessarily an expert at) ,Email (Gitstart mail)");
   const [emailColumnName, setEmailColumnName] = useState<string>();
   const [languageData, setLanguageData] = useState<CSVParsedDataType>();
-  // const [columnNames, setColumnNames] = useState<string[]>();
   const [error, setError] = useState<string>("");
   const { parseCsv, getColumnNames } = useHandleCsv();
 
@@ -18,7 +17,6 @@ function App() {
     if (files && files.length > 0) {
       setSelectedFile(files[0]);
       const names = await getColumnNames(files[0]);
-      // setColumnNames(names);
       setEmailColumnName(() =>
         names?.find((name) => name.toLowerCase().includes("email"))
       );
@@ -34,7 +32,6 @@ function App() {
         setLanguageData(stackData);
       } catch (error: any) {
         throw Error(error);
-        // setError(error.message);
       }
     }
   };
@@ -97,25 +94,6 @@ function App() {
               />
             </div>
           )}
-
-          {/* {!!selectedFile && (
-            <div className="w-full">
-              <label className="flex flex-col my-4 text-gray-700 mb-2">
-                Stack to display column name (on csv file).
-              </label>
-              <select
-                value={stackToSeeIndex}
-                onChange={(e) => setStackToSeeIndex(Number(e.target.value))}
-                className="border border-gray-400 p-2 w-full max-w-md rounded-md cursor-pointer "
-              >
-                {columnNames?.map((name, index) => (
-                  <option value={index} key={index}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )} */}
 
           <button className="mt-4 px-20 py-3 bg-black text-white font-semibold rounded-full hover:bg-white hover:text-black hover:border hover:border-black">
             Process

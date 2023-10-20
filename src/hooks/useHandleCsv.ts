@@ -8,7 +8,6 @@ export interface StackData {
 
 export type CSVParsedDataType = { [key: string]: StackData[] };
 
-
 const processCSVData = (
   parsedData: any[],
   emailColumnName: string,
@@ -48,7 +47,10 @@ const processCSVData = (
             email,
             displayValue: rowData[j] || "",
           };
-          data[columnName].push(stackData);
+          // Dont include zeros
+          if (Number(stackData.displayValue) > 0) {
+            data[columnName].push(stackData);
+          }
         }
       }
     }
@@ -56,7 +58,6 @@ const processCSVData = (
 
   return data;
 };
-
 
 export const useHandleCsv = () => {
   const [parsedCsvData, setParsedCsvData] = useState<any[]>([]);
@@ -88,15 +89,15 @@ export const useHandleCsv = () => {
     const data = processCSVData(
       parsedCsvData,
       emailColumnName,
-      nonStackColumnNames?.split(',')
+      nonStackColumnNames?.split(",")
     );
     // console.log(data)
 
-    return data
+    return data;
   };
 
   return {
     parseCsv,
-    getColumnNames
+    getColumnNames,
   };
 };

@@ -26,7 +26,7 @@ const BarChart: FunctionComponent<BarChartProps> = ({ chartData }) => {
 
     // Process data to calculate stacked bar chart
     const dataValues = {
-      "0-5": [] as number[],
+      "1-5": [] as number[],
       "5-7": [] as number[],
       "7-10": [] as number[],
     };
@@ -36,7 +36,7 @@ const BarChart: FunctionComponent<BarChartProps> = ({ chartData }) => {
       if (chartData.hasOwnProperty(technology)) {
         const techData = chartData[technology];
         const categoryCounts = {
-          "0-5": 0,
+          "1-5": 0,
           "5-7": 0,
           "7-10": 0,
         } as Record<string, number>;
@@ -44,7 +44,7 @@ const BarChart: FunctionComponent<BarChartProps> = ({ chartData }) => {
         for (const developer of techData) {
           const displayValue = Number(developer.displayValue);
           if (displayValue >= 0 && displayValue <= 5) {
-            categoryCounts["0-5"]++;
+            categoryCounts["1-5"]++;
           } else if (displayValue > 5 && displayValue <= 7) {
             categoryCounts["5-7"]++;
           } else if (displayValue > 7 && displayValue <= 10) {
@@ -52,7 +52,7 @@ const BarChart: FunctionComponent<BarChartProps> = ({ chartData }) => {
           }
         }
 
-        dataValues["0-5"].push(categoryCounts["0-5"]);
+        dataValues["1-5"].push(categoryCounts["1-5"]);
         dataValues["5-7"].push(categoryCounts["5-7"]);
         dataValues["7-10"].push(categoryCounts["7-10"]);
       }
@@ -66,8 +66,8 @@ const BarChart: FunctionComponent<BarChartProps> = ({ chartData }) => {
         labels: Object.keys(chartData),
         datasets: [
           {
-            label: "0-5",
-            data: dataValues["0-5"],
+            label: "1-5",
+            data: dataValues["1-5"],
             backgroundColor: '#ff3784',
             datalabels: {
               align: "center",
