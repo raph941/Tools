@@ -69,7 +69,7 @@ export const XPcalculator = () => {
     <div>
       <h1 className="font-semibold text-2xl md:text-3xl mb-6">XP calculator</h1>
       <p className="text-lg">
-        Understand how your XP grows based on your cycle of influence.
+        Understand how your XP grows based on your cycles of influence.
       </p>
 
       <div className="mt-8">
