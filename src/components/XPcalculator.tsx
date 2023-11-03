@@ -184,9 +184,9 @@ export const XPcalculator = () => {
         </div>
 
         <div className="flex flex-col justify-center items-center w-full font-bold text-lg">
-          <span>XP Gain:</span>
+          <span>XP Gain (per month):</span>
           <span className="font-normal">{totalXPGain}</span>
-          <span>$ Gain:</span>
+          <span>$ Gain (per month):</span>
           <span className="font-normal">{Math.round(Number(totalXPGain) * 1.5)}</span>
         </div>
       </div>
