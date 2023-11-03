@@ -3,7 +3,7 @@ import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import "chartjs-plugin-datalabels";
 
-import { CSVParsedDataType } from "./hooks/useHandleCsv";
+import { CSVParsedDataType } from "../hooks/useHandleCsv";
 
 interface BarChartProps {
   chartData: CSVParsedDataType;
