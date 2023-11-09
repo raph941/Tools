@@ -16,6 +16,6 @@ code {
     monospace;
 }
 
-.h-visible-screen {
-  height: calc(100vh - 65px);
+.min-h-visible-screen {
+  min-height: calc(100vh - 65px);
 }

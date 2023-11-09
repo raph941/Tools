@@ -83,7 +83,7 @@ export const XPcalculator = () => {
   ]);
 
   return (
-    <div className="h-full flex flex-col justify-center">
+    <main className="min-h-visible-screen h-full flex flex-col justify-center p-8 md:px-16">
       <h1 className="font-bold text-3xl md:text-5xl mb-16 md:mb-24">
         XP calculator
       </h1>
@@ -170,7 +170,7 @@ export const XPcalculator = () => {
 
         <div className="flex flex-col justify-center items-center w-full font-bold text-lg">
           {!role ? (
-            <h3 className="text-5xl text-gray-400 font-bold">
+            <h3 className="text-4xl md:text-5xl text-gray-400 font-bold">
               Need numbers to crunch...
             </h3>
           ) : (
@@ -196,6 +196,6 @@ export const XPcalculator = () => {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 };

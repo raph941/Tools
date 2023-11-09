@@ -40,7 +40,7 @@ export const CsvAnalyser = () => {
   };
 
   return (
-    <div>
+    <main className="min-h-visible-screen h-full flex flex-col justify-center p-8 md:px-16">
       <h1 className="font-semibold text-2xl md:text-3xl">Tech Stack Audit</h1>
 
       <form
@@ -108,7 +108,7 @@ export const CsvAnalyser = () => {
           </div>
         </>
       )}
-    </div>
+    </main>
   );
 }
 
