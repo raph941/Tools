@@ -7,13 +7,13 @@ function App() {
 
   return (
     <div className="App">
-      <header className="p-8 border-b">
+      <header className="p-5 md:px-16 border-b">
         <Link to="/">
           <img src={logo} className="" alt="logo" />
         </Link>
       </header>
 
-      <main className="p-8">
+      <main className="h-visible-screen p-8 md:px-16">
         {isRoot && (
           <div>
             <h1 className="font-semibold text-2xl md:text-3xl mb-6">Tools</h1>

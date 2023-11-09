@@ -1,193 +1,199 @@
-import * as Collapsible from "@radix-ui/react-collapsible";
 import { useEffect, useState } from "react";
-import { RowSpacingIcon, Cross2Icon } from "@radix-ui/react-icons";
 
 const roleMultiplier = {
-    dev: {
-        team: 0.7,
-        collective: 0.2,
-        community: 0.1,
-        label: 'Developer'
-    },
-    pm: {
-        team: 0.7,
-        collective: 0.2,
-        community: 0.1,
-        label: 'Project Manager'
-    },
-    tl: {
-        team: 0.7,
-        collective: 0.2,
-        community: 0.1,
-        label: 'Team Lead'
-    },
-    cl: {
-        team: 0,
-        collective: 0.7,
-        community: 0.3,
-        label: 'Collective Lead'
-    }
+  dev: {
+    team: 0.7,
+    collective: 0.2,
+    community: 0.1,
+    label: "Developer",
+  },
+  pm: {
+    team: 0.7,
+    collective: 0.2,
+    community: 0.1,
+    label: "Project Manager",
+  },
+  tl: {
+    team: 0.7,
+    collective: 0.2,
+    community: 0.1,
+    label: "Team Lead",
+  },
+  cl: {
+    team: 0,
+    collective: 0.7,
+    community: 0.3,
+    label: "Collective Lead",
+  },
 } as const;
 type RoleKeys = keyof typeof roleMultiplier;
 const roles = Object.keys(roleMultiplier) as RoleKeys[];
 
-
 export const XPcalculator = () => {
-  const [isCollapsibleOpened, setIsCollapsibleOpened] =
-    useState<boolean>(false);
-  const [maxXpGain, setMaxXpGain] = useState<number>(22);
-  const [baseXP, setBaseXP] = useState<number>(0.5);
-  const [perfectCreditPerMonth, setPerfectCreditPerMonth] =
-    useState<number>(600);
+  const maxXpGain = 22;
+  const baseXP = 0.5;
+  const perfectCreditPerMonth = 600;
 
-  const [role, setRole] = useState<RoleKeys>("dev");
-
+  const [role, setRole] = useState<RoleKeys>();
   const [teamCredit, setTeamCredit] = useState<number>(0);
   const [collectiveCredit, setCollectiveCredit] = useState<number>(0);
   const [communityCredit, setCommunityCredit] = useState<number>(0);
   const [currentXPLevel, setCurrentXPLevel] = useState<number>(0);
-
   const [totalXPGain, setTotalXPGain] = useState<number>(0);
 
-  useEffect(() => {
-    console.log(role);
-  }, [role])
+  const annualXPGain = Number(totalXPGain) * 12;
+  const xpAfterAYear = Math.round(
+    Number(currentXPLevel) + Number(annualXPGain)
+  );
+  const percentageIncrease = Math.round(
+    (annualXPGain / Number(currentXPLevel)) * 100 || 0
+  );
 
   useEffect(() => {
+    if (!role) {
+      return;
+    }
+
     const baseGain = (baseXP / 100) * currentXPLevel;
     const teamGain =
-      (teamCredit / perfectCreditPerMonth) * roleMultiplier[role].team * maxXpGain;
+      (teamCredit / perfectCreditPerMonth) *
+      roleMultiplier[role].team *
+      maxXpGain;
     const collectiveGain =
-      (collectiveCredit / perfectCreditPerMonth) * roleMultiplier[role].collective * maxXpGain;
+      (collectiveCredit / perfectCreditPerMonth) *
+      roleMultiplier[role].collective *
+      maxXpGain;
     const communityGain =
-      (communityCredit / perfectCreditPerMonth) * roleMultiplier[role].community * maxXpGain;
+      (communityCredit / perfectCreditPerMonth) *
+      roleMultiplier[role].community *
+      maxXpGain;
 
-    setTotalXPGain(Math.round(baseGain + collectiveGain + teamGain + communityGain))
-  }, [role, teamCredit, collectiveCredit, communityCredit, maxXpGain, perfectCreditPerMonth, baseXP, currentXPLevel]);
+    setTotalXPGain(
+      Math.round(baseGain + collectiveGain + teamGain + communityGain)
+    );
+  }, [
+    role,
+    teamCredit,
+    collectiveCredit,
+    communityCredit,
+    maxXpGain,
+    perfectCreditPerMonth,
+    baseXP,
+    currentXPLevel,
+  ]);
 
   return (
-    <div>
-      <h1 className="font-semibold text-2xl md:text-3xl mb-6">XP calculator</h1>
-      <p className="text-lg">
-        Understand how your XP grows based on your cycles of influence.
-      </p>
+    <div className="h-full flex flex-col justify-center">
+      <h1 className="font-bold text-3xl md:text-5xl mb-16 md:mb-24">
+        XP calculator
+      </h1>
 
-      <div className="mt-8">
-        <Collapsible.Root
-          onOpenChange={(open) => setIsCollapsibleOpened(open)}
-          className=""
-        >
-          <Collapsible.Trigger asChild>
-            <button className="flex items-center gap-8 font-semibold">
-              <span>Gain Parameters</span>{" "}
-              <span>
-                {isCollapsibleOpened ? <Cross2Icon /> : <RowSpacingIcon />}
-              </span>
-            </button>
-          </Collapsible.Trigger>
-          <Collapsible.Content>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4  w-full mt-6 border p-6">
-              <label className="flex flex-col gap-4">
-                Max XP gain per month
-                <input
-                  type="number"
-                  value={maxXpGain}
-                  onChange={(e) => setMaxXpGain(Number(e.target.value))}
-                  className="border rounded-lg p-2 bg-gray-100"
-                />
-              </label>
-              <label className="flex flex-col gap-4">
-                Base XP per month
-                <input
-                  type="number"
-                  value={baseXP}
-                  onChange={(e) => setBaseXP(Number(e.target.value))}
-                  className="border rounded-lg p-2 bg-gray-100"
-                />
-              </label>
-              <label className="flex flex-col gap-4">
-                Perfect credit shipperd per month
-                <input
-                  type="number"
-                  value={perfectCreditPerMonth}
-                  onChange={(e) =>
-                    setPerfectCreditPerMonth(Number(e.target.value))
-                  }
-                  className="border rounded-lg p-2 bg-gray-100"
-                />
-              </label>
-            </div>
-          </Collapsible.Content>
-        </Collapsible.Root>
-      </div>
-
-      <hr className="my-8" />
-
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex flex-col gap-8 w-full">
-          <div className="flex flex-col gap-2">
-            <label className="text-lg">Role</label>
+      <div className="flex flex-col md:flex-row gap-16">
+        <div className="flex flex-col gap-8 w-full max-w-[384px] justify-center">
+          <div className="flex flex-col">
+            <label className="flex flex-col text-sm leading-7">
+              My role at Gitstart is
+            </label>
 
             <select
-              className="border p-3 rounded-lg bg-gray-50"
+              className="border border-gray-300 rounded-lg h-[40px] px-2"
+              value={role}
               onChange={(e) => setRole(e.target.value as RoleKeys)}
             >
+              <option value="" disabled selected className="text-gray-900">
+                Select a role
+              </option>
               {roles.map((value) => (
-                <option key={value} value={value}>{roleMultiplier[value].label}</option>
+                <option key={value} value={value}>
+                  {roleMultiplier[value].label}
+                </option>
               ))}
             </select>
           </div>
-        
-          <label className="flex flex-col gap-4">
-            Current XP Level
+
+          <div className="flex flex-col">
+            <label className="flex flex-col text-sm leading-7">
+              My XP is Current
+            </label>
             <input
               type="number"
-              value={currentXPLevel || undefined}
+              value={currentXPLevel || ""}
               onChange={(e) => setCurrentXPLevel(Number(e.target.value))}
-              className="border rounded-lg p-2 bg-gray-50"
-              placeholder="team delivery"
+              className="border border-gray-300 rounded-lg h-[40px] px-2"
+              placeholder="1000"
             />
-          </label>
-          
-          <label className="flex flex-col gap-4">
-            Team credit per dev
-            <input
-              type="number"
-              value={teamCredit || undefined}
-              onChange={(e) => setTeamCredit(Number(e.target.value))}
-              className="border rounded-lg p-2 bg-gray-50"
-              placeholder="XP level"
-            />
-          </label>
+          </div>
 
-          <label className="flex flex-col gap-4">
-            Collective credit per dev
-            <input
-              type="number"
-              value={collectiveCredit || undefined}
-              onChange={(e) => setCollectiveCredit(Number(e.target.value))}
-              className="border rounded-lg p-2 bg-gray-50"
-              placeholder="collective delivery"
-            />
-          </label>
+          {role && (
+            <>
+              <div className="flex flex-col">
+                <label className="flex flex-col text-sm leading-7">
+                  My team shipped this many credits per developer
+                </label>
+                <input
+                  type="number"
+                  value={teamCredit || ""}
+                  onChange={(e) => setTeamCredit(Number(e.target.value))}
+                  className="border border-gray-300 rounded-lg h-[40px] px-2"
+                  placeholder="400"
+                />
+              </div>
 
-          <label className="flex flex-col gap-4">
-            Community credit per dev
-            <input
-              type="number"
-              value={communityCredit || undefined}
-              onChange={(e) => setCommunityCredit(Number(e.target.value))}
-              className="border rounded-lg p-2 bg-gray-50"
-              placeholder="community delivery"
-            />
-          </label>
+              <div className="flex flex-col">
+                <label className="flex flex-col text-sm leading-7">
+                  My collective shipped this many credits per developer
+                </label>
+                <input
+                  type="number"
+                  value={collectiveCredit || ""}
+                  onChange={(e) => setCollectiveCredit(Number(e.target.value))}
+                  className="border border-gray-300 rounded-lg h-[40px] px-2"
+                  placeholder="300"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="flex flex-col text-sm leading-7">
+                  My community shipped this many credits per developer
+                </label>
+                <input
+                  type="number"
+                  value={communityCredit || ""}
+                  onChange={(e) => setCommunityCredit(Number(e.target.value))}
+                  className="border border-gray-300 rounded-lg h-[40px] px-2"
+                  placeholder="250"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex flex-col justify-center items-center w-full font-bold text-lg">
-          <span>XP Gain (per month):</span>
-          <span className="font-normal">{totalXPGain}</span>
-          <span>$ Gain (per month):</span>
-          <span className="font-normal">{Math.round(Number(totalXPGain) * 1.5)}</span>
+          {!role ? (
+            <h3 className="text-5xl text-gray-400 font-bold">
+              Need numbers to crunch...
+            </h3>
+          ) : (
+            <div className="flex flex-col font-semibold leading-[48px] text-4xl gap-10">
+              <p>
+                You will receive{" "}
+                <span className="text-green-400 font-bold">
+                  +{Number(totalXPGain) || 0} XP
+                </span>
+              </p>
+              <p>
+                In 1 year, you would have{" "}
+                <span className="text-green-400 font-bold">
+                  {xpAfterAYear} XP
+                </span>{" "}
+                a{" "}
+                <span className="text-green-400 font-bold">
+                  {percentageIncrease}% increase
+                </span>
+                .
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
