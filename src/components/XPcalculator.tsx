@@ -174,7 +174,7 @@ export const XPcalculator = () => {
               Need numbers to crunch...
             </h3>
           ) : (
-            <div className="flex flex-col font-semibold leading-[48px] text-4xl gap-10">
+            <div className="flex flex-col font-semibold leading-[48px] text-3xl md:text-4xl md:gap-[43px] gap-6">
               <p>
                 You will receive{" "}
                 <span className="text-green-400 font-bold">
