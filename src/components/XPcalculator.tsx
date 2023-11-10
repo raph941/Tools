@@ -1,4 +1,13 @@
 import { useEffect, useState } from "react";
+import { Input } from "./Input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
 
 const roleMultiplier = {
   dev: {
@@ -30,8 +39,8 @@ type RoleKeys = keyof typeof roleMultiplier;
 const roles = Object.keys(roleMultiplier) as RoleKeys[];
 
 export const XPcalculator = () => {
-  const maxXpGain = 22;
-  const baseXP = 0.5;
+  const maxMonthlyXpGain = 22;
+  const baseXP = 0.05;
   const perfectCreditPerMonth = 600;
 
   const [role, setRole] = useState<RoleKeys>();
@@ -46,7 +55,7 @@ export const XPcalculator = () => {
     Number(currentXPLevel) + Number(annualXPGain)
   );
   const percentageIncrease = Math.round(
-    (annualXPGain / Number(currentXPLevel)) * 100 || 0
+    Math.round((annualXPGain / currentXPLevel) * 100) || 0
   );
 
   useEffect(() => {
@@ -54,29 +63,30 @@ export const XPcalculator = () => {
       return;
     }
 
-    const baseGain = (baseXP / 100) * currentXPLevel;
+    const baseGain = (baseXP / 3) * currentXPLevel;
     const teamGain =
       (teamCredit / perfectCreditPerMonth) *
       roleMultiplier[role].team *
-      maxXpGain;
+      maxMonthlyXpGain;
     const collectiveGain =
       (collectiveCredit / perfectCreditPerMonth) *
       roleMultiplier[role].collective *
-      maxXpGain;
+      maxMonthlyXpGain;
     const communityGain =
       (communityCredit / perfectCreditPerMonth) *
       roleMultiplier[role].community *
-      maxXpGain;
+      maxMonthlyXpGain;
 
-    setTotalXPGain(
-      Math.round(baseGain + collectiveGain + teamGain + communityGain)
+    const totalGain = Math.round(
+      baseGain + collectiveGain + teamGain + communityGain
     );
+    setTotalXPGain(totalGain > maxMonthlyXpGain ? maxMonthlyXpGain : totalGain);
   }, [
     role,
     teamCredit,
     collectiveCredit,
     communityCredit,
-    maxXpGain,
+    maxMonthlyXpGain,
     perfectCreditPerMonth,
     baseXP,
     currentXPLevel,
@@ -88,38 +98,41 @@ export const XPcalculator = () => {
         XP calculator
       </h1>
 
-      <div className="flex flex-col md:flex-row gap-16">
+      <div className="flex flex-col md:flex-row gap-16 items-center md:items-start">
         <div className="flex flex-col gap-8 w-full max-w-[384px] justify-center">
           <div className="flex flex-col">
             <label className="flex flex-col text-sm leading-7">
               My role at Gitstart is
             </label>
 
-            <select
-              className="border border-gray-300 rounded-lg h-[40px] px-2"
-              value={role}
-              onChange={(e) => setRole(e.target.value as RoleKeys)}
-            >
-              <option value="" disabled selected className="text-gray-900">
-                Select a role
-              </option>
-              {roles.map((value) => (
-                <option key={value} value={value}>
-                  {roleMultiplier[value].label}
-                </option>
-              ))}
-            </select>
+            <Select onValueChange={(value) => setRole(value as RoleKeys)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {roles.map((value) => (
+                    <SelectItem
+                      key={value}
+                      value={value}
+                      className="cursor-pointer"
+                    >
+                      {roleMultiplier[value].label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex flex-col">
             <label className="flex flex-col text-sm leading-7">
-              My XP is Current
+              My XP is Currently
             </label>
-            <input
+            <Input
               type="number"
               value={currentXPLevel || ""}
               onChange={(e) => setCurrentXPLevel(Number(e.target.value))}
-              className="border border-gray-300 rounded-lg h-[40px] px-2"
               placeholder="1000"
             />
           </div>
@@ -130,11 +143,10 @@ export const XPcalculator = () => {
                 <label className="flex flex-col text-sm leading-7">
                   My team shipped this many credits per developer
                 </label>
-                <input
+                <Input
                   type="number"
                   value={teamCredit || ""}
                   onChange={(e) => setTeamCredit(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg h-[40px] px-2"
                   placeholder="400"
                 />
               </div>
@@ -143,11 +155,10 @@ export const XPcalculator = () => {
                 <label className="flex flex-col text-sm leading-7">
                   My collective shipped this many credits per developer
                 </label>
-                <input
+                <Input
                   type="number"
                   value={collectiveCredit || ""}
                   onChange={(e) => setCollectiveCredit(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg h-[40px] px-2"
                   placeholder="300"
                 />
               </div>
@@ -156,11 +167,10 @@ export const XPcalculator = () => {
                 <label className="flex flex-col text-sm leading-7">
                   My community shipped this many credits per developer
                 </label>
-                <input
+                <Input
                   type="number"
                   value={communityCredit || ""}
                   onChange={(e) => setCommunityCredit(Number(e.target.value))}
-                  className="border border-gray-300 rounded-lg h-[40px] px-2"
                   placeholder="250"
                 />
               </div>
@@ -168,7 +178,7 @@ export const XPcalculator = () => {
           )}
         </div>
 
-        <div className="flex flex-col justify-center items-center w-full font-bold text-lg">
+        <div className="flex flex-col justify-center items-center w-full font-bold text-lg text-center md:text-left">
           {!role ? (
             <h3 className="text-4xl md:text-5xl text-gray-400 font-bold">
               Need numbers to crunch...
@@ -188,7 +198,7 @@ export const XPcalculator = () => {
                 </span>{" "}
                 a{" "}
                 <span className="text-green-400 font-bold">
-                  {percentageIncrease}% increase
+                  {isNaN(percentageIncrease) ? 0 : percentageIncrease}% increase
                 </span>
                 .
               </p>
