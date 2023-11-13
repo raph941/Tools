@@ -40,7 +40,7 @@ const roles = Object.keys(roleMultiplier) as RoleKeys[];
 
 export const XPcalculator = () => {
   const maxMonthlyXpGain = 22;
-  const baseXP = 0.05;
+  const baseXP = 0.005;
   const perfectCreditPerMonth = 600;
 
   const [role, setRole] = useState<RoleKeys>();
