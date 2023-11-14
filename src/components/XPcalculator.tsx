@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import classNames from "classnames";
 import { Input } from "./Input";
 import {
   Select,
@@ -93,12 +94,23 @@ export const XPcalculator = () => {
   ]);
 
   return (
-    <main className="min-h-visible-screen h-full flex flex-col justify-center p-8 md:px-16">
-      <h1 className="font-bold text-3xl md:text-5xl mb-16 md:mb-24">
+    <main
+      className={classNames(
+        "min-h-visible-screen h-full flex flex-col p-8 md:px-16",
+        {
+          "justify-center": !!role,
+        }
+      )}
+    >
+      <h1
+        className={classNames("font-bold text-3xl md:text-5xl mb-16 md:mb-24", {
+          "pt-12 md:pt-[120px]": !role,
+        })}
+      >
         XP calculator
       </h1>
 
-      <div className="flex flex-col md:flex-row gap-16 items-center md:items-start">
+      <div className="flex flex-col md:flex-row gap-16 items-center md:items-center">
         <div className="flex flex-col gap-8 w-full max-w-[384px] justify-center">
           <div className="flex flex-col">
             <label className="flex flex-col text-sm leading-7">
